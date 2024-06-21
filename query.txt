@@ -1,0 +1,46 @@
+1
+
+select *, (select customer_id from orders o where o.id = od.order_id)
+from order_details od
+
+2
+
+select * from order_details od
+where order_id in (select id from orders o where o.shipper_id = 3  )
+
+3
+
+select order_id, avg(quantity) from (SELECT * FROM order_details WHERE quantity >10 ) AS temp_table
+group by order_id;
+
+4 
+
+with TemporalTable as (
+    select *
+    from order_details
+    where quantity >10
+)
+select order_id, avg(quantity) as avg_qut from TemporalTable
+group by order_id
+
+5 
+
+DELIMITER //
+
+DROP FUNCTION IF EXISTS divideFloats//
+
+CREATE FUNCTION divideFloats(a FLOAT, b FLOAT) RETURNS FLOAT
+DETERMINISTIC
+NO SQL
+BEGIN
+    RETURN a / b;
+END//
+
+DELIMITER ;
+
+select order_id, divideFloats(quantity, 2.0) AS half_quantity from order_details;
+        
+
+
+
+
